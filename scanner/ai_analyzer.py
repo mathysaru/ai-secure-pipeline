@@ -7,7 +7,7 @@ def classify_vulnerability(issue_text):
         return "HIGH"
     elif "eval" in issue_text:
         return "CRITICAL"
-    elif "subprocess" in issue_text or "os.system" in issue_text:
+    elif "shell" in issue_text or "os.system" in issue_text:
         return "CRITICAL"
     elif "md5" in issue_text:
         return "MEDIUM"
