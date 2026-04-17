@@ -1,0 +1,28 @@
+name: AI Security Pipeline
+
+on: [push]
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Bandit Scan
+      run: |
+        bandit -r app/ -f json -o bandit-report.json
+
+    - name: Run AI Analyzer
+      run: |
+        python scanner/ai_analyzer.py
