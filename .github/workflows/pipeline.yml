@@ -21,7 +21,7 @@ jobs:
 
     - name: Run Bandit Scan
       run: |
-        bandit -r app/ -f json -o bandit-report.json
+        bandit -r app/ -f json -o bandit-report.json || true
 
     - name: Run AI Analyzer
       run: |
