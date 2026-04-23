@@ -26,3 +26,10 @@ jobs:
     - name: Run AI Analyzer
       run: |
         python scanner/ai_analyzer.py
+
+    - name: Run AI Analyzer
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        python scanner/ai_analyzer.py || true
+
