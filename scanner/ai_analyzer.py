@@ -1,22 +1,44 @@
 import json
+import os
+from openai import OpenAI
 
-def classify_and_suggest(issue_text):
-    issue_text_lower = issue_text.lower()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-    if "hardcoded" in issue_text_lower:
-        return "HIGH", "Use environment variables instead of hardcoding secrets."
+def get_ai_analysis(issue_text):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a cybersecurity expert. Classify vulnerability severity (LOW, MEDIUM, HIGH, CRITICAL) and suggest a secure fix."
+                },
+                {
+                    "role": "user",
+                    "content": f"Analyze this vulnerability:\n{issue_text}"
+                }
+            ],
+            temperature=0.3,
+            max_tokens=120
+        )
 
-    elif "eval" in issue_text_lower:
-        return "CRITICAL", "Replace eval() with ast.literal_eval() for safe evaluation."
+        output = response.choices[0].message.content.strip()
 
-    elif "shell" in issue_text_lower or "os.system" in issue_text_lower:
-        return "CRITICAL", "Avoid os.system(). Use subprocess.run() with argument list."
+        # Extract severity (simple parsing)
+        if "CRITICAL" in output:
+            severity = "CRITICAL"
+        elif "HIGH" in output:
+            severity = "HIGH"
+        elif "MEDIUM" in output:
+            severity = "MEDIUM"
+        else:
+            severity = "LOW"
 
-    elif "md5" in issue_text_lower:
-        return "MEDIUM", "Replace MD5 with SHA-256 for secure hashing."
+        return severity, output
 
-    else:
-        return "LOW", "Review code manually."
+    except Exception as e:
+        return "MEDIUM", f"AI unavailable: {str(e)}"
+
 
 def analyze_bandit_report():
     with open("bandit-report.json") as f:
@@ -25,28 +47,32 @@ def analyze_bandit_report():
     results = data.get("results", [])
     final_decision = "PASS"
 
-    print("\n🔍 AI ANALYSIS + FIX SUGGESTIONS:\n")
+    comment = "## 🔐 AI Security Report (Dynamic AI)\n\n"
 
     for issue in results:
         text = issue.get("issue_text", "")
 
-        severity, suggestion = classify_and_suggest(text)
+        severity, suggestion = get_ai_analysis(text)
 
-        print(f"Issue: {text}")
-        print(f"AI Severity: {severity}")
-        print(f"💡 Suggested Fix: {suggestion}\n")
+        comment += f"### ⚠️ {severity}\n"
+        comment += f"- **Issue**: {text}\n"
+        comment += f"- **AI Suggestion**: {suggestion}\n\n"
 
         if severity in ["HIGH", "CRITICAL"]:
             final_decision = "FAIL"
 
-    print("🚦 FINAL PIPELINE DECISION:", final_decision)
+    comment += f"\n🚦 **Final Decision:** {final_decision}\n"
+
+    with open("comment.txt", "w") as f:
+        f.write(comment)
+
+    print(comment)
 
     if final_decision == "FAIL":
-        print("\n⚠️ Developer Action Required: Please fix the above issues.\n")
         exit(1)
     else:
-        print("\n✅ Code is secure. Ready for deployment.\n")
         exit(0)
+
 
 if __name__ == "__main__":
     analyze_bandit_report()
