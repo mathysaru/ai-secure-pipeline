@@ -49,7 +49,7 @@ def analyze_bandit_report():
     results = data.get("results", [])
     final_decision = "PASS"
 
-    comment = "## 🔐 AI Security Report (Dynamic)\n\n"
+    comment = "## 🔐 AI Security Report\n\n"
 
     for issue in results:
         text = issue.get("issue_text", "")
@@ -58,10 +58,10 @@ def analyze_bandit_report():
 
         if ai_output is None:
             ai_output = "Fallback: Manual review required. Potential high risk vulnerability."
-            final_decision = "FAIL"   # 🔥 important
+            final_decision = "FAIL"
 
-        comment += f"### 🔍 Issue\n{text}\n\n"
-        comment += f"🤖 AI Analysis:\n{ai_output}\n\n"
+        comment += f"### Issue\n{text}\n\n"
+        comment += f" AI Analysis:\n{ai_output}\n\n"
 
         if any(word in ai_output.lower() for word in ["critical", "high"]):
             final_decision = "FAIL"
