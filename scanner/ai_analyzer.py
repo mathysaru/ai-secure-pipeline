@@ -1,44 +1,7 @@
 import json
 import os
 
-# Try importing OpenAI safely
-try:
-    from openai import OpenAI
-    api_key = os.getenv("OPENAI_API_KEY")
-    client = OpenAI(api_key=api_key) if api_key else None
-except Exception:
-    client = None
-
-def get_ai_suggestion(issue_text):
-    # ✅ If API key exists → use real AI
-    if client:
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a cybersecurity expert."},
-                    {"role": "user", "content": f"Vulnerability: {issue_text}. Give severity and fix."}
-                ],
-                max_tokens=150
-            )
-
-            output = response.choices[0].message.content
-
-            if "CRITICAL" in output:
-                severity = "CRITICAL"
-            elif "HIGH" in output:
-                severity = "HIGH"
-            elif "MEDIUM" in output:
-                severity = "MEDIUM"
-            else:
-                severity = "LOW"
-
-            return severity, output
-
-        except Exception:
-            pass  # fallback if API fails
-
-    # ✅ FALLBACK (ALWAYS WORKS — VERY IMPORTANT FOR DEMO)
+def classify_and_suggest(issue_text):
     text = issue_text.lower()
 
     if "hardcoded" in text:
@@ -50,8 +13,7 @@ def get_ai_suggestion(issue_text):
     elif "md5" in text:
         return "MEDIUM", "Use SHA-256 instead of MD5."
     else:
-        return "LOW", "Manual review required."
-
+        return "LOW", "Review manually."
 
 def analyze_bandit_report():
     with open("bandit-report.json") as f:
@@ -60,22 +22,22 @@ def analyze_bandit_report():
     results = data.get("results", [])
     final_decision = "PASS"
 
-    comment = "## 🔐 AI Security Report (Dynamic AI)\n\n"
+    comment = "## 🔐 AI Security Report\n\n"
 
     for issue in results:
         text = issue.get("issue_text", "")
-
-        severity, suggestion = get_ai_suggestion(text)
+        severity, suggestion = classify_and_suggest(text)
 
         comment += f"### ⚠️ {severity}\n"
         comment += f"- **Issue**: {text}\n"
-        comment += f"- **AI Suggestion**: {suggestion}\n\n"
+        comment += f"- **Fix**: {suggestion}\n\n"
 
         if severity in ["HIGH", "CRITICAL"]:
             final_decision = "FAIL"
 
     comment += f"\n🚦 **Final Decision:** {final_decision}\n"
 
+    # Save comment to file
     with open("comment.txt", "w") as f:
         f.write(comment)
 
@@ -85,7 +47,6 @@ def analyze_bandit_report():
         exit(1)
     else:
         exit(0)
-
 
 if __name__ == "__main__":
     analyze_bandit_report()
