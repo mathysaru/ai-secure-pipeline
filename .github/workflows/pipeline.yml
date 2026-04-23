@@ -24,8 +24,5 @@ jobs:
         bandit -r app/ -f json -o bandit-report.json || true
 
     - name: Run AI Analyzer
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
-        python scanner/ai_analyzer.py || true
-
+        python scanner/ai_analyzer.py
