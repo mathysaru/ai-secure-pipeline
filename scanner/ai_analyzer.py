@@ -22,7 +22,7 @@ def analyze_bandit_report():
     results = data.get("results", [])
     final_decision = "PASS"
 
-    comment = "## 🔐 AI Security Report\n\n"
+    comment = "## AI Security Report\n\n"
 
     for issue in results:
         text = issue.get("issue_text", "")
@@ -35,10 +35,11 @@ def analyze_bandit_report():
         if severity in ["HIGH", "CRITICAL"]:
             final_decision = "FAIL"
 
-    comment += f"\n🚦 **Final Decision:** {final_decision}\n"
+    comment += f"\n**Final Decision:** {final_decision}\n"
 
     # Save comment to file
-    with open("comment.txt", "w") as f:
+    with open("comment.txt", "w", encoding="utf-8") as f:
+
         f.write(comment)
 
     print(comment)

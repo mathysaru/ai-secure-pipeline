@@ -1,8 +1,5 @@
 # Vulnerable code
-import os
-# 1. Hardcoded password (Vulnerability)
-password = "admin123"
-
+import os 
 # 2. Command Injection
 def run_command(user_input):
     os.system("echo " + user_input)
@@ -28,10 +25,10 @@ if __name__ == "__main__":
 # import hashlib
 # import ast
 
-# # ✅ Secure password using environment variable
+# # Secure password using environment variable
 # password = os.getenv("APP_PASSWORD")
 
-# # ✅ Safe command execution (no shell injection)
+# # Safe command execution (no shell injection)
 # def run_command(user_input):
 #     try:
 #         result = subprocess.run(
@@ -44,14 +41,14 @@ if __name__ == "__main__":
 #     except Exception as e:
 #         return str(e)
 
-# # ✅ Safe evaluation (no eval)
+# # Safe evaluation (no eval)
 # def calculate(expression):
 #     try:
 #         return ast.literal_eval(expression)
 #     except Exception:
 #         return "Invalid expression"
 
-# # ✅ Strong hashing (SHA-256)
+# # Strong hashing (SHA-256)
 # def hash_password(pwd):
 #     return hashlib.sha256(pwd.encode()).hexdigest()
 
