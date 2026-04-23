@@ -3,7 +3,7 @@ import requests
 import os
 
 API_KEY = os.getenv("OPENAI_API_KEY")
-
+print("DEBUG API KEY:", API_KEY)
 def get_ai_suggestion(issue_text):
     prompt = f"""
     You are a cybersecurity expert.
