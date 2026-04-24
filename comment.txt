@@ -1,9 +1,5 @@
 ## AI Security Report
 
-### ⚠️ HIGH
-- **Issue**: Possible hardcoded password: 'admin123'
-- **Fix**: Use environment variables instead of hardcoding secrets.
-
 ### ⚠️ CRITICAL
 - **Issue**: Starting a process with a shell, possible injection detected, security issue.
 - **Fix**: Use subprocess.run() instead of os.system().
@@ -16,4 +12,5 @@
 - **Issue**: Use of weak MD5 hash for security. Consider usedforsecurity=False
 - **Fix**: Use SHA-256 instead of MD5.
 
- **Final Decision:** FAIL
+
+**Final Decision:** FAIL
