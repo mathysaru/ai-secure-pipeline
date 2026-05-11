@@ -1,12 +1,10 @@
 name: AI Security Pipeline
-
 on:
   push:
     branches:
       - main
       - master
   workflow_dispatch:
-
 jobs:
   security-check:
     runs-on: ubuntu-latest
