@@ -1,0 +1,62 @@
+[
+    {
+        "code": "7 def run_command(user_input):\n8     os.system(\"echo \" + user_input)\n9 \n",
+        "col_offset": 4,
+        "end_col_offset": 35,
+        "filename": "app/vulnerable_app.py",
+        "issue_confidence": "HIGH",
+        "issue_cwe": {
+            "id": 78,
+            "link": "https://cwe.mitre.org/data/definitions/78.html"
+        },
+        "issue_severity": "HIGH",
+        "issue_text": "Starting a process with a shell, possible injection detected, security issue.",
+        "line_number": 8,
+        "line_range": [
+            8
+        ],
+        "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b605_start_process_with_a_shell.html",
+        "test_id": "B605",
+        "test_name": "start_process_with_a_shell"
+    },
+    {
+        "code": "11 def calculate(expression):\n12     return eval(expression)\n13 \n",
+        "col_offset": 11,
+        "end_col_offset": 27,
+        "filename": "app/vulnerable_app.py",
+        "issue_confidence": "HIGH",
+        "issue_cwe": {
+            "id": 78,
+            "link": "https://cwe.mitre.org/data/definitions/78.html"
+        },
+        "issue_severity": "MEDIUM",
+        "issue_text": "Use of possibly insecure function - consider using safer ast.literal_eval.",
+        "line_number": 12,
+        "line_range": [
+            12
+        ],
+        "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b307-eval",
+        "test_id": "B307",
+        "test_name": "blacklist"
+    },
+    {
+        "code": "16 def hash_password(pwd):\n17     return hashlib.md5(pwd.encode()).hexdigest()\n18 \n",
+        "col_offset": 11,
+        "end_col_offset": 36,
+        "filename": "app/vulnerable_app.py",
+        "issue_confidence": "HIGH",
+        "issue_cwe": {
+            "id": 327,
+            "link": "https://cwe.mitre.org/data/definitions/327.html"
+        },
+        "issue_severity": "HIGH",
+        "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+        "line_number": 17,
+        "line_range": [
+            17
+        ],
+        "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b324_hashlib.html",
+        "test_id": "B324",
+        "test_name": "hashlib"
+    }
+]

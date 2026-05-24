@@ -1,16 +1,20 @@
 ## AI Security Report
 
-### 🤖 AI Severity: CRITICAL
-- **Issue**: Starting a process with a shell, possible injection detected, security issue.
-- **Fix**: Immediate fix required. Avoid dangerous execution patterns.
+# 🤖 AI Severity: CRITICAL
+- *Issue*: Starting a process with a shell, possible injection detected, security issue.
+- *Risk Score*: 90/100
+- *Fix*: Immediate fix required. Avoid dangerous execution patterns.
 
-### 🤖 AI Severity: CRITICAL
-- **Issue**: Use of possibly insecure function - consider using safer ast.literal_eval.
-- **Fix**: Immediate fix required. Avoid dangerous execution patterns.
+# 🤖 AI Severity: CRITICAL
+- *Issue*: Use of possibly insecure function - consider using safer ast.literal_eval.
+- *Risk Score*: 90/100
+- *Fix*: Immediate fix required. Avoid dangerous execution patterns.
 
-### 🤖 AI Severity: MEDIUM
-- **Issue**: Use of weak MD5 hash for security. Consider usedforsecurity=False
-- **Fix**: Use stronger cryptographic or secure coding practices.
+# 🤖 AI Severity: MEDIUM
+- *Issue*: Use of weak MD5 hash for security. Consider usedforsecurity=False
+- *Risk Score*: 40/100
+- *Fix*: Use stronger cryptographic or secure coding practices.
 
 
-**Final Decision:** FAIL
+*Final Decision:* FAIL
+- *CVSS Score* 5.5

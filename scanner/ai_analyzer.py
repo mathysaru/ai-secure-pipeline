@@ -1,7 +1,19 @@
 import json
 import os
 import joblib
-
+import datetime
+SEVERITY_SCORES = {
+    "CRITICAL": 90,
+    "HIGH": 70,
+    "MEDIUM": 40,
+    "LOW": 10
+}
+CVSS_MAPPING = {
+    "CRITICAL": 9.5,
+    "HIGH": 8.0,
+    "MEDIUM": 5.5,
+    "LOW": 2.0
+}
 # Load trained AI model
 model = joblib.load("scanner/vulnerability_model.pkl")
 def ai_classify(issue_text):
@@ -35,6 +47,13 @@ def analyze_bandit_report():
         data = json.load(f)
 
     results = data.get("results", [])
+    # Save historical reports
+    import datetime
+
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+    with open(f"history/report_{timestamp}.json", "w") as history_file:
+        json.dump(results, history_file, indent=4)
 
     final_decision = "PASS"
 
@@ -46,15 +65,16 @@ def analyze_bandit_report():
     for issue in results:
 
         text = issue.get("issue_text", "")
-
         try:
             severity, suggestion = ai_classify(text)
+            risk_score = SEVERITY_SCORES.get(severity, 0)
         except:
             severity, suggestion = classify_and_suggest(text)
 
-        comment += f"### 🤖 AI Severity: {severity}\n"        
-        comment += f"- **Issue**: {text}\n"
-        comment += f"- **Fix**: {suggestion}\n\n"
+        comment += f"# 🤖 AI Severity: {severity}\n"        
+        comment += f"- *Issue*: {text}\n"
+        comment += f"- *Risk Score*: {risk_score}/100\n"
+        comment += f"- *Fix*: {suggestion}\n\n"
 
         # STORE DATA FOR DASHBOARD
         issues_data.append({
@@ -62,11 +82,13 @@ def analyze_bandit_report():
             "severity": severity,
             "ai_analysis": suggestion
         })
-
+        cvss_score = CVSS_MAPPING.get(severity, 0)
         if severity in ["HIGH", "CRITICAL"]:
             final_decision = "FAIL"
 
-    comment += f"\n**Final Decision:** {final_decision}\n"
+    comment += f"\n*Final Decision:* {final_decision}\n"
+    comment += f"- *CVSS Score* {cvss_score}\n"
+
 
     # SAVE COMMENT FILE
     with open("comment.txt", "w", encoding="utf-8") as f:
@@ -80,6 +102,7 @@ def analyze_bandit_report():
         "issues": issues_data,
         "final_decision": final_decision
     }
+    
 
     with open("ai-report.json", "w") as f:
         json.dump(final_data, f, indent=4)
@@ -90,5 +113,6 @@ def analyze_bandit_report():
         exit(1)
     else:
         exit(0)
+
 if __name__ == "__main__":
     analyze_bandit_report()

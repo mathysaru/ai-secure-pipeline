@@ -1,7 +1,7 @@
 # Vulnerable code
 import os
 # 1. Hardcoded password (Vulnerability)
-# password = "admin123"
+password = "admin123"
 
 # 2. Command Injection
 def run_command(user_input):

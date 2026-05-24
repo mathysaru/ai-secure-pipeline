@@ -153,7 +153,7 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    st.markdown("### Vulnerability Distribution")
+    st.markdown("# Vulnerability Distribution")
 
     labels = ['High', 'Medium', 'Low']
     values = [high, medium, low]
