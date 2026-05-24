@@ -1,24 +1,19 @@
 {
     "issues": [
         {
-            "issue_text": "Possible hardcoded password: 'admin123'",
-            "severity": "HIGH",
-            "ai_analysis": "Use environment variables instead of hardcoding secrets."
-        },
-        {
             "issue_text": "Starting a process with a shell, possible injection detected, security issue.",
             "severity": "CRITICAL",
-            "ai_analysis": "Use subprocess.run() instead of os.system()."
+            "ai_analysis": "Immediate fix required. Avoid dangerous execution patterns."
         },
         {
             "issue_text": "Use of possibly insecure function - consider using safer ast.literal_eval.",
             "severity": "CRITICAL",
-            "ai_analysis": "Replace eval() with ast.literal_eval()."
+            "ai_analysis": "Immediate fix required. Avoid dangerous execution patterns."
         },
         {
             "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
             "severity": "MEDIUM",
-            "ai_analysis": "Use SHA-256 instead of MD5."
+            "ai_analysis": "Use stronger cryptographic or secure coding practices."
         }
     ],
     "final_decision": "FAIL"

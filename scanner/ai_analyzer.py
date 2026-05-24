@@ -1,6 +1,20 @@
 import json
 import os
+import joblib
 
+# Load trained AI model
+model = joblib.load("scanner/vulnerability_model.pkl")
+def ai_classify(issue_text):
+    prediction = model.predict([issue_text])[0]
+
+    suggestions = {
+        "CRITICAL": "Immediate fix required. Avoid dangerous execution patterns.",
+        "HIGH": "Secure the code and validate inputs properly.",
+        "MEDIUM": "Use stronger cryptographic or secure coding practices.",
+        "LOW": "Review manually and improve coding standards."
+    }
+
+    return prediction, suggestions.get(prediction, "Review manually.") 
 def classify_and_suggest(issue_text):
     text = issue_text.lower()
 
@@ -33,9 +47,12 @@ def analyze_bandit_report():
 
         text = issue.get("issue_text", "")
 
-        severity, suggestion = classify_and_suggest(text)
+        try:
+            severity, suggestion = ai_classify(text)
+        except:
+            severity, suggestion = classify_and_suggest(text)
 
-        comment += f"### ⚠️ {severity}\n"
+        comment += f"### 🤖 AI Severity: {severity}\n"        
         comment += f"- **Issue**: {text}\n"
         comment += f"- **Fix**: {suggestion}\n\n"
 
