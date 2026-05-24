@@ -1,122 +1,222 @@
 import streamlit as st
 import json
-import plotly.express as px
+import pandas as pd
+import matplotlib.pyplot as plt
 from streamlit_autorefresh import st_autorefresh
-import os
 
-st.set_page_config(page_title="AI Security Dashboard", layout="wide")
+# -----------------------------
+# PAGE CONFIG
+# -----------------------------
 
-st.title("🔐 AI Automated Security Dashboard (Live)")
+st.set_page_config(
+    page_title="AI Secure Pipeline",
+    layout="wide"
+)
 
-# 🔄 Auto-refresh every 5 sec
+# -----------------------------
+# AUTO REFRESH
+# -----------------------------
+
 st_autorefresh(interval=5000, key="refresh")
 
-# Load report
-file_path = "bandit-report.json"
+# -----------------------------
+# CUSTOM CSS (JENKINS STYLE)
+# -----------------------------
 
-if not os.path.exists(file_path):
-    st.error("bandit-report.json not found. Run Bandit first.")
+st.markdown("""
+<style>
+
+body {
+    background-color: #f4f7fc;
+}
+
+.main {
+    background-color: #f4f7fc;
+}
+
+.big-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.fail {
+    color: red;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.issue-box {
+    background-color: #fff5f5;
+    border-left: 6px solid red;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.ai-box {
+    background-color: #f3f4f6;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# TITLE
+# -----------------------------
+
+st.markdown(
+    "<div class='big-title'>🔐 AI Automated Security Dashboard</div>",
+    unsafe_allow_html=True
+)
+
+st.write("Live CI/CD Vulnerability Monitoring Dashboard")
+
+# -----------------------------
+# LOAD REPORT
+# -----------------------------
+
+try:
+    with open("ai-report.json") as f:
+        data = json.load(f)
+
+except:
+    st.error("ai-report.json not found")
     st.stop()
 
-with open(file_path) as f:
-    data = json.load(f)
+# -----------------------------
+# METRICS
+# -----------------------------
 
-results = data.get("results", [])
+total = len(data["issues"])
 
-# Counters
-critical, high, medium, low = 0, 0, 0, 0
+high = 0
+medium = 0
+low = 0
 
-def classify(issue):
-    text = issue.lower()
-    if "eval" in text or "shell" in text:
-        return "CRITICAL"
-    elif "hardcoded" in text:
-        return "HIGH"
-    elif "md5" in text:
-        return "MEDIUM"
-    else:
-        return "LOW"
+for issue in data["issues"]:
 
-def suggestion(issue):
-    text = issue.lower()
-    if "eval" in text:
-        return "Use ast.literal_eval()"
-    elif "shell" in text:
-        return "Avoid os.system()"
-    elif "hardcoded" in text:
-        return "Use env variables"
-    elif "md5" in text:
-        return "Use SHA-256"
-    else:
-        return "Manual review"
+    severity = issue["severity"].lower()
 
-table_data = []
-
-for issue in results:
-    text = issue.get("issue_text", "")
-    severity = classify(text)
-    fix = suggestion(text)
-
-    if severity == "CRITICAL":
-        critical += 1
-    elif severity == "HIGH":
+    if severity == "high":
         high += 1
-    elif severity == "MEDIUM":
+
+    elif severity == "medium":
         medium += 1
+
     else:
         low += 1
 
-    table_data.append({
-        "Issue": text,
-        "Severity": severity,
-        "Fix": fix
-    })
+# -----------------------------
+# TOP CARDS
+# -----------------------------
 
-# Metrics
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("CRITICAL", critical)
-col2.metric("HIGH", high)
-col3.metric("MEDIUM", medium)
-col4.metric("LOW", low)
 
-st.divider()
+with col1:
+    st.metric("Total Issues", total)
 
-# Data for charts
-labels = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
-values = [critical, high, medium, low]
+with col2:
+    st.metric("High Risk", high)
 
-# Final Decision
-if critical > 0 or high > 0:
-    st.error("FINAL DECISION: FAIL")
+with col3:
+    st.metric("Medium Risk", medium)
+
+with col4:
+    st.metric("Low Risk", low)
+
+# -----------------------------
+# CHARTS
+# -----------------------------
+
+col1, col2 = st.columns(2)
+
+# PIE CHART
+
+with col1:
+
+    st.markdown("### Vulnerability Distribution")
+
+    labels = ['High', 'Medium', 'Low']
+    values = [high, medium, low]
+
+    fig1, ax1 = plt.subplots()
+
+    ax1.pie(
+        values,
+        labels=labels,
+        autopct='%1.1f%%'
+    )
+
+    st.pyplot(fig1)
+
+# BAR GRAPH
+
+with col2:
+
+    st.markdown("### Severity Analysis")
+
+    fig2, ax2 = plt.subplots()
+
+    ax2.bar(labels, values)
+
+    st.pyplot(fig2)
+
+# -----------------------------
+# PIPELINE STATUS
+# -----------------------------
+
+st.markdown("## 🚦 Pipeline Decision")
+
+decision = data["final_decision"]
+
+if decision == "FAIL":
+    st.markdown(
+        "<div class='fail'>❌ BUILD FAILED</div>",
+        unsafe_allow_html=True
+    )
 else:
-    st.success("FINAL DECISION: PASS")
+    st.markdown(
+        "<div class='success'>✅ BUILD PASSED</div>",
+        unsafe_allow_html=True
+    )
 
-# Animated Pie Chart
-st.subheader("Vulnerability Distribution")
+# -----------------------------
+# ISSUES
+# -----------------------------
 
-pie_fig = px.pie(
-    names=labels,
-    values=values,
-    title="Severity Distribution",
-    hole=0.3
-)
+st.markdown("## 🔍 Detected Vulnerabilities")
 
-st.plotly_chart(pie_fig, use_container_width=True)
+for issue in data["issues"]:
 
-# Animated Bar Chart
-st.subheader("Severity Count")
+    st.markdown(f"""
+    <div class='issue-box'>
 
-bar_fig = px.bar(
-    x=labels,
-    y=values,
-    title="Severity Count",
-    text=values
-)
+    <h4>{issue['issue_text']}</h4>
 
-bar_fig.update_traces(textposition='outside')
+    <b>Severity:</b> {issue['severity']}
 
-st.plotly_chart(bar_fig, use_container_width=True)
+    <div class='ai-box'>
+    🤖 <b>AI Analysis:</b><br>
+    {issue['ai_analysis']}
+    </div>
 
-# Table
-st.subheader("📋 Vulnerability Details")
-st.dataframe(table_data, use_container_width=True)
+    </div>
+    """, unsafe_allow_html=True)

@@ -16,31 +16,56 @@ def classify_and_suggest(issue_text):
         return "LOW", "Review manually."
 
 def analyze_bandit_report():
+
     with open("bandit-report.json") as f:
         data = json.load(f)
 
     results = data.get("results", [])
+
     final_decision = "PASS"
 
     comment = "## AI Security Report\n\n"
 
+    # NEW JSON STORAGE
+    issues_data = []
+
     for issue in results:
+
         text = issue.get("issue_text", "")
+
         severity, suggestion = classify_and_suggest(text)
 
         comment += f"### ⚠️ {severity}\n"
         comment += f"- **Issue**: {text}\n"
         comment += f"- **Fix**: {suggestion}\n\n"
 
+        # STORE DATA FOR DASHBOARD
+        issues_data.append({
+            "issue_text": text,
+            "severity": severity,
+            "ai_analysis": suggestion
+        })
+
         if severity in ["HIGH", "CRITICAL"]:
             final_decision = "FAIL"
 
     comment += f"\n**Final Decision:** {final_decision}\n"
 
-    # Save comment to file
+    # SAVE COMMENT FILE
     with open("comment.txt", "w", encoding="utf-8") as f:
-
         f.write(comment)
+
+    # ----------------------------
+    # NEW JSON OUTPUT FOR UI
+    # ----------------------------
+
+    final_data = {
+        "issues": issues_data,
+        "final_decision": final_decision
+    }
+
+    with open("ai-report.json", "w") as f:
+        json.dump(final_data, f, indent=4)
 
     print(comment)
 
@@ -48,6 +73,5 @@ def analyze_bandit_report():
         exit(1)
     else:
         exit(0)
-
 if __name__ == "__main__":
     analyze_bandit_report()
