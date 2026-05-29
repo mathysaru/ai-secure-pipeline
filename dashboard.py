@@ -95,7 +95,9 @@ st.info("Model: TF-IDF + Naive Bayes")
 # -----------------------------
 
 try:
-    with open("ai-report.json") as f:
+    st.cache_data.clear()
+
+    with open("reports/final-report.json") as f:
         data = json.load(f)
 
 except:

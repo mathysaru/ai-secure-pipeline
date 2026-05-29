@@ -9,7 +9,9 @@ on:
     branches:
       - main
   workflow_dispatch:
-
+    
+permissions:
+  contents: write
 jobs:
   security-check:
     runs-on: ubuntu-latest
@@ -30,7 +32,7 @@ jobs:
       - name: Install Project Dependencies
         run: |
           pip install -r requirements.txt
-          
+
       - name: Run Bandit Scan
         run: |
           mkdir -p reports
@@ -44,3 +46,14 @@ jobs:
         with:
          name: ai-security-report
          path: ai-report.json
+      - name: Commit latest reports
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git add reports/bandit-report.json
+          git add reports/final-report.json
+
+          git commit -m "Auto update security reports" || echo "No changes"
+
+          git push
