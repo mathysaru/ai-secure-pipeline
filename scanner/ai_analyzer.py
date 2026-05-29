@@ -149,7 +149,7 @@ def analyze_bandit_report():
     }
     
 
-    with open("ai-report.json", "w") as f:
+    with open("reports/final-report.json", "w") as f:
         json.dump(final_data, f, indent=4)
 
     print(comment)

@@ -93,16 +93,26 @@ st.info("Model: TF-IDF + Naive Bayes")
 # -----------------------------
 # LOAD REPORT
 # -----------------------------
+import os
+import json
 
-try:
-    st.cache_data.clear()
+report_path = "reports/final-report.json"
 
-    with open("reports/final-report.json") as f:
+if os.path.exists(report_path):
+    with open(report_path, "r") as f:
         data = json.load(f)
-
-except:
-    st.error("ai-report.json not found")
+else:
+    st.error("AI report not found")
     st.stop()
+# try:
+#     st.cache_data.clear()
+
+#     with open("reports/final-report.json") as f:
+#         data = json.load(f)
+
+# except:
+#     st.error("ai-report.json not found")
+#     st.stop()
 
 # -----------------------------
 # METRICS
