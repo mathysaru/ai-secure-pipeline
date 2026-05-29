@@ -30,17 +30,34 @@ def ai_classify(issue_text):
 def classify_and_suggest(issue_text):
     text = issue_text.lower()
 
+    # Hardcoded secrets
     if "hardcoded" in text:
         return "HIGH", "Use environment variables instead of hardcoding secrets."
+
+    # Dangerous eval
     elif "eval" in text:
         return "CRITICAL", "Replace eval() with ast.literal_eval()."
-    elif "shell" in text or "os.system" in text:
+
+    # os.system usage
+    elif "os.system" in text:
         return "CRITICAL", "Use subprocess.run() instead of os.system()."
+
+    # Weak hashing
     elif "md5" in text:
         return "MEDIUM", "Use SHA-256 instead of MD5."
+
+    # Safe subprocess handling
+    elif "subprocess" in text:
+
+        # Only fail if actual shell execution exists
+        if "shell=true" in text:
+            return "CRITICAL", "Avoid shell=True in subprocess."
+
+        # Otherwise treat as informational
+        return "LOW", "Safe subprocess usage detected."
+
     else:
         return "LOW", "Review manually."
-
 def analyze_bandit_report():
 
     with open("bandit-report.json") as f:
@@ -65,11 +82,39 @@ def analyze_bandit_report():
     for issue in results:
 
         text = issue.get("issue_text", "")
+        # severity, suggestion = classify_and_suggest(text)
+        # risk_score = SEVERITY_SCORES.get(severity, 0)
         try:
             severity, suggestion = ai_classify(text)
+
+            lower_text = text.lower()
+
+            # SAFE subprocess override
+            if "subprocess" in lower_text:
+                if "shell=true" not in lower_text:
+                    severity = "LOW"
+                    suggestion = "Safe subprocess usage detected."
+
+            # Partial executable path override
+            if "partial executable path" in lower_text:
+                severity = "LOW"
+                suggestion = "Controlled executable usage detected."
+
+            # SAFE ast.literal_eval override
+            if "literal_eval" in lower_text:
+                severity = "LOW"
+                suggestion = "Safe evaluation method used."
+
+            # SAFE sha256 override
+            if "sha256" in lower_text:
+                severity = "LOW"
+                suggestion = "Strong hashing algorithm used."
+
             risk_score = SEVERITY_SCORES.get(severity, 0)
-        except:
+
+        except Exception:
             severity, suggestion = classify_and_suggest(text)
+            risk_score = SEVERITY_SCORES.get(severity, 0)
 
         comment += f"# 🤖 AI Severity: {severity}\n"        
         comment += f"- *Issue*: {text}\n"

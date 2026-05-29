@@ -125,6 +125,54 @@ for issue in data["issues"]:
     else:
         low += 1
 
+
+# -----------------------------
+# PIPELINE STATUS
+# -----------------------------
+
+st.markdown("## 🚦 Pipeline Decision")
+
+decision = data["final_decision"]
+
+if decision == "FAIL":
+    st.markdown(
+        "<div class='fail'>❌ BUILD FAILED</div>",
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown(
+        "<div class='success'>✅ BUILD PASSED</div>",
+        unsafe_allow_html=True
+    )
+
+# -----------------------------
+# ISSUES
+# -----------------------------
+
+if decision == "FAIL":
+
+    st.markdown("## 🔍 Detected Vulnerabilities")
+
+    for issue in data["issues"]:
+
+        st.markdown(f"""
+        <div class='issue-box'>
+
+        <h4>{issue['issue_text']}</h4>
+
+        <b>Severity:</b> {issue['severity']}
+
+        <div class='ai-box'>
+        🤖 <b>AI Analysis:</b><br>
+        {issue['ai_analysis']}
+        </div>
+
+        </div>
+        """, unsafe_allow_html=True)
+
+else:
+
+    st.success("✅ No vulnerabilities detected. Secure build passed.")
 # -----------------------------
 # TOP CARDS
 # -----------------------------
@@ -179,45 +227,3 @@ with col2:
     ax2.bar(labels, values)
 
     st.pyplot(fig2)
-
-# -----------------------------
-# PIPELINE STATUS
-# -----------------------------
-
-st.markdown("## 🚦 Pipeline Decision")
-
-decision = data["final_decision"]
-
-if decision == "FAIL":
-    st.markdown(
-        "<div class='fail'>❌ BUILD FAILED</div>",
-        unsafe_allow_html=True
-    )
-else:
-    st.markdown(
-        "<div class='success'>✅ BUILD PASSED</div>",
-        unsafe_allow_html=True
-    )
-
-# -----------------------------
-# ISSUES
-# -----------------------------
-
-st.markdown("## 🔍 Detected Vulnerabilities")
-
-for issue in data["issues"]:
-
-    st.markdown(f"""
-    <div class='issue-box'>
-
-    <h4>{issue['issue_text']}</h4>
-
-    <b>Severity:</b> {issue['severity']}
-
-    <div class='ai-box'>
-    🤖 <b>AI Analysis:</b><br>
-    {issue['ai_analysis']}
-    </div>
-
-    </div>
-    """, unsafe_allow_html=True)

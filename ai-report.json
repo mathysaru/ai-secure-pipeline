@@ -1,14 +1,19 @@
 {
     "issues": [
         {
+            "issue_text": "Possible hardcoded password: 'admin123'",
+            "severity": "HIGH",
+            "ai_analysis": "Secure the code and validate inputs properly."
+        },
+        {
             "issue_text": "Starting a process with a shell, possible injection detected, security issue.",
             "severity": "CRITICAL",
             "ai_analysis": "Immediate fix required. Avoid dangerous execution patterns."
         },
         {
             "issue_text": "Use of possibly insecure function - consider using safer ast.literal_eval.",
-            "severity": "CRITICAL",
-            "ai_analysis": "Immediate fix required. Avoid dangerous execution patterns."
+            "severity": "LOW",
+            "ai_analysis": "Safe evaluation method used."
         },
         {
             "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",

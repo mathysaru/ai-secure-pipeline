@@ -1,14 +1,19 @@
 ## AI Security Report
 
+# 🤖 AI Severity: HIGH
+- *Issue*: Possible hardcoded password: 'admin123'
+- *Risk Score*: 70/100
+- *Fix*: Secure the code and validate inputs properly.
+
 # 🤖 AI Severity: CRITICAL
 - *Issue*: Starting a process with a shell, possible injection detected, security issue.
 - *Risk Score*: 90/100
 - *Fix*: Immediate fix required. Avoid dangerous execution patterns.
 
-# 🤖 AI Severity: CRITICAL
+# 🤖 AI Severity: LOW
 - *Issue*: Use of possibly insecure function - consider using safer ast.literal_eval.
-- *Risk Score*: 90/100
-- *Fix*: Immediate fix required. Avoid dangerous execution patterns.
+- *Risk Score*: 10/100
+- *Fix*: Safe evaluation method used.
 
 # 🤖 AI Severity: MEDIUM
 - *Issue*: Use of weak MD5 hash for security. Consider usedforsecurity=False
