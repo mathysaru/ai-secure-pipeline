@@ -47,20 +47,6 @@ def analyze_bandit_report():
         data = json.load(f)
 
     results = data.get("results", [])
-    if len(results) == 0:
-        clean_report = """
-        ## AI Security Report
-
-        ✅ No vulnerabilities detected.
-
-        **Final Decision:** PASS
-        """
-
-    with open("comment.txt", "w", encoding="utf-8") as f:
-        f.write(clean_report)
-
-    print(clean_report)
-    exit(0)
     # Save historical reports
     import datetime
 
