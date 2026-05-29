@@ -36,7 +36,7 @@ jobs:
       - name: Run Bandit Scan
         run: |
           mkdir -p reports
-          bandit -r app/ -f json -o reports/bandit-report.json || true
+          bandit -r app/ -f json -o reports/bandit-report.json
 
       - name: Run AI Analyzer
         run: python scanner/ai_analyzer.py
