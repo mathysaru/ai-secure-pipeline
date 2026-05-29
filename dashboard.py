@@ -88,8 +88,6 @@ st.markdown(
 )
 
 st.write("Live CI/CD Vulnerability Monitoring Dashboard")
-st.success("AI Model Enabled: Dynamic Vulnerability Classification")
-st.info("Model: TF-IDF + Naive Bayes")
 # -----------------------------
 # LOAD REPORT
 # -----------------------------
@@ -286,3 +284,5 @@ with col2:
     ax2.bar(labels, values)
 
     st.pyplot(fig2)
+st.success("AI Model Enabled: Dynamic Vulnerability Classification")
+st.info("Model: TF-IDF + Naive Bayes")
