@@ -59,7 +59,9 @@ def classify_and_suggest(issue_text):
     else:
         return "LOW", "Review manually."
 def analyze_bandit_report():
-
+    high_count = 0
+    medium_count = 0
+    low_count = 0
     with open("bandit-report.json") as f:
         data = json.load(f)
 
@@ -128,6 +130,14 @@ def analyze_bandit_report():
             "ai_analysis": suggestion
         })
         cvss_score = CVSS_MAPPING.get(severity, 0)
+        if severity in ["CRITICAL", "HIGH"]:
+            high_count += 1
+
+        elif severity == "MEDIUM":
+            medium_count += 1
+
+        else:
+            low_count += 1
         if severity in ["HIGH", "CRITICAL"]:
             final_decision = "FAIL"
 
@@ -144,10 +154,14 @@ def analyze_bandit_report():
     # ----------------------------
 
     final_data = {
-        "issues": issues_data,
-        "final_decision": final_decision
+    "timestamp": timestamp,
+    "total_issues": len(issues_data),
+    "high": high_count,
+    "medium": medium_count,
+    "low": low_count,
+    "issues": issues_data,
+    "final_decision": final_decision
     }
-    
 
     with open("ai-report.json", "w") as f:
         json.dump(final_data, f, indent=4)

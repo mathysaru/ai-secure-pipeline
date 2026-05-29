@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-import pandas as pd
+import pandas as pd 
 import matplotlib.pyplot as plt
 from streamlit_autorefresh import st_autorefresh
 
@@ -8,10 +8,7 @@ from streamlit_autorefresh import st_autorefresh
 # PAGE CONFIG
 # -----------------------------
 
-st.set_page_config(
-    page_title="AI Secure Pipeline",
-    layout="wide"
-)
+st.set_page_config(page_title="AI Secure Pipeline", layout="wide")
 
 # -----------------------------
 # AUTO REFRESH
@@ -23,7 +20,8 @@ st_autorefresh(interval=5000, key="refresh")
 # CUSTOM CSS (JENKINS STYLE)
 # -----------------------------
 
-st.markdown("""
+st.markdown(
+    """
 <style>
 
 body {
@@ -76,7 +74,9 @@ body {
 }
 
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # -----------------------------
 # TITLE
@@ -84,7 +84,7 @@ body {
 
 st.markdown(
     "<div class='big-title'>🔐 AI Automated Security Dashboard</div>",
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 st.write("Live CI/CD Vulnerability Monitoring Dashboard")
@@ -131,19 +131,12 @@ for issue in data["issues"]:
 # -----------------------------
 
 st.markdown("## 🚦 Pipeline Decision")
-
 decision = data["final_decision"]
 
 if decision == "FAIL":
-    st.markdown(
-        "<div class='fail'>❌ BUILD FAILED</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("<div class='fail'>❌ BUILD FAILED</div>", unsafe_allow_html=True)
 else:
-    st.markdown(
-        "<div class='success'>✅ BUILD PASSED</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("<div class='success'>✅ BUILD PASSED</div>", unsafe_allow_html=True)
 
 # -----------------------------
 # ISSUES
@@ -155,7 +148,8 @@ if decision == "FAIL":
 
     for issue in data["issues"]:
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div class='issue-box'>
 
         <h4>{issue['issue_text']}</h4>
@@ -168,7 +162,9 @@ if decision == "FAIL":
         </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
 else:
 
@@ -190,6 +186,73 @@ with col3:
 
 with col4:
     st.metric("Low Risk", low)
+# -----------------------------
+# REAL-TIME BUILD HISTORY
+# -----------------------------
+
+st.markdown("## 📜 Pipeline Monitoring History")
+
+history_data = []
+
+import os
+
+if os.path.exists("history"):
+
+    for file in os.listdir("history"):
+
+        if file.endswith(".json"):
+
+            try:
+                with open(f"history/{file}") as f:
+                    report = json.load(f)
+
+                high = 0
+                medium = 0
+                low = 0
+
+                for issue in report:
+
+                    text = issue.get("issue_text", "").lower()
+
+                    if "critical" in text or "eval" in text:
+                        high += 1
+
+                    elif "md5" in text:
+                        medium += 1
+
+                    else:
+                        low += 1
+
+                total = len(report)
+
+                if high > 0:
+                    status = "❌ FAIL"
+                else:
+                    status = "✅ PASS"
+                history_data.append(
+                    {
+                        "Build": file.replace(".json", ""),
+                        "Total Issues": total,
+                        "High": high,
+                        "Medium": medium,
+                        "Low": low,
+                        "Status": status,
+                    }
+                )
+
+            except:
+                pass
+
+if history_data:
+
+    history_df = pd.DataFrame(history_data)
+
+    history_df = history_df.sort_values(by="Build", ascending=False)
+
+    st.dataframe(history_df, use_container_width=True, hide_index=True)
+
+else:
+    st.info("No historical pipeline data found.")
 
 # -----------------------------
 # CHARTS
@@ -203,16 +266,12 @@ with col1:
 
     st.markdown("# Vulnerability Distribution")
 
-    labels = ['High', 'Medium', 'Low']
+    labels = ["High", "Medium", "Low"]
     values = [high, medium, low]
 
     fig1, ax1 = plt.subplots()
 
-    ax1.pie(
-        values,
-        labels=labels,
-        autopct='%1.1f%%'
-    )
+    ax1.pie(values, labels=labels, autopct="%1.1f%%")
 
     st.pyplot(fig1)
 
