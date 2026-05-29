@@ -60,7 +60,7 @@ def classify_and_suggest(issue_text):
         return "LOW", "Review manually."
 def analyze_bandit_report():
 
-    with open("bandit-report.json") as f:
+    with open("report/bandit-report.json") as f:
         data = json.load(f)
 
     results = data.get("results", [])
