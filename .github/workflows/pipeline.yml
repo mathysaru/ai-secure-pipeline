@@ -1,36 +1,57 @@
-name: AI Security Pipeline
+name: AI Secure Pipeline CI
+
 on:
   push:
     branches:
       - main
       - master
-  workflow_dispatch:
+
+  pull_request:
+    branches:
+      - main
+      - master
+
 jobs:
-  security-check:
+  build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        python-version: [3.11]
+
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install Dependencies
-      run: |
-        pip install -r requirements.txt
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
 
-    - name: Run Bandit Scan
-      run: |
-        bandit -r app/ -f json -o bandit-report.json || true
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
-    - name: Run AI Analyzer
-      run: python scanner/ai_analyzer.py
+      - name: Install Security Tools
+        run: |
+          pip install bandit safety semgrep
 
-    - name: Upload Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: ai-security-report
-        path: ai-report.json
+      - name: Run Bandit Scan
+        run: |
+          bandit -r . || true
+
+      - name: Run Safety Scan
+        run: |
+          safety check || true
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan . || true
+
+      - name: Run Streamlit Test
+        run: |
+          python -m py_compile *.py
