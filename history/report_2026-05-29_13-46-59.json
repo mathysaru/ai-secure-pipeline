@@ -1,0 +1,72 @@
+[
+    {
+        "code": "26 import os\n27 import subprocess\n28 import hashlib\n",
+        "col_offset": 0,
+        "end_col_offset": 17,
+        "filename": "app/vulnerable_app.py",
+        "issue_confidence": "HIGH",
+        "issue_cwe": {
+            "id": 78,
+            "link": "https://cwe.mitre.org/data/definitions/78.html"
+        },
+        "issue_severity": "LOW",
+        "issue_text": "Consider possible security implications associated with the subprocess module.",
+        "line_number": 27,
+        "line_range": [
+            27
+        ],
+        "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_imports.html#b404-import-subprocess",
+        "test_id": "B404",
+        "test_name": "blacklist"
+    },
+    {
+        "code": "36     try:\n37         result = subprocess.run(\n38             [\"echo\", user_input],\n39             capture_output=True,\n40             text=True,\n41             check=True\n42         )\n43         return result.stdout.strip()\n",
+        "col_offset": 17,
+        "end_col_offset": 9,
+        "filename": "app/vulnerable_app.py",
+        "issue_confidence": "HIGH",
+        "issue_cwe": {
+            "id": 78,
+            "link": "https://cwe.mitre.org/data/definitions/78.html"
+        },
+        "issue_severity": "LOW",
+        "issue_text": "Starting a process with a partial executable path",
+        "line_number": 37,
+        "line_range": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42
+        ],
+        "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b607_start_process_with_partial_path.html",
+        "test_id": "B607",
+        "test_name": "start_process_with_partial_path"
+    },
+    {
+        "code": "36     try:\n37         result = subprocess.run(\n38             [\"echo\", user_input],\n39             capture_output=True,\n40             text=True,\n41             check=True\n42         )\n43         return result.stdout.strip()\n",
+        "col_offset": 17,
+        "end_col_offset": 9,
+        "filename": "app/vulnerable_app.py",
+        "issue_confidence": "HIGH",
+        "issue_cwe": {
+            "id": 78,
+            "link": "https://cwe.mitre.org/data/definitions/78.html"
+        },
+        "issue_severity": "LOW",
+        "issue_text": "subprocess call - check for execution of untrusted input.",
+        "line_number": 37,
+        "line_range": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42
+        ],
+        "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b603_subprocess_without_shell_equals_true.html",
+        "test_id": "B603",
+        "test_name": "subprocess_without_shell_equals_true"
+    }
+]
