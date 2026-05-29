@@ -1,20 +1,25 @@
 ## AI Security Report
 
-# 🤖 AI Severity: LOW
-- *Issue*: Consider possible security implications associated with the subprocess module.
-- *Risk Score*: 10/100
-- *Fix*: Safe subprocess usage detected.
+# 🤖 AI Severity: HIGH
+- *Issue*: Possible hardcoded password: 'admin123'
+- *Risk Score*: 70/100
+- *Fix*: Secure the code and validate inputs properly.
+
+# 🤖 AI Severity: CRITICAL
+- *Issue*: Starting a process with a shell, possible injection detected, security issue.
+- *Risk Score*: 90/100
+- *Fix*: Immediate fix required. Avoid dangerous execution patterns.
 
 # 🤖 AI Severity: LOW
-- *Issue*: Starting a process with a partial executable path
+- *Issue*: Use of possibly insecure function - consider using safer ast.literal_eval.
 - *Risk Score*: 10/100
-- *Fix*: Controlled executable usage detected.
+- *Fix*: Safe evaluation method used.
 
-# 🤖 AI Severity: LOW
-- *Issue*: subprocess call - check for execution of untrusted input.
-- *Risk Score*: 10/100
-- *Fix*: Safe subprocess usage detected.
+# 🤖 AI Severity: MEDIUM
+- *Issue*: Use of weak MD5 hash for security. Consider usedforsecurity=False
+- *Risk Score*: 40/100
+- *Fix*: Use stronger cryptographic or secure coding practices.
 
 
-*Final Decision:* PASS
-- *CVSS Score* 2.0
+*Final Decision:* FAIL
+- *CVSS Score* 5.5
