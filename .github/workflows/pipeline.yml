@@ -36,7 +36,7 @@ jobs:
       - name: Run Bandit Scan
         run: |
           mkdir -p reports
-          bandit -r app/ -f json -o bandit-report.json || true
+          bandit -r app/ -f json -o reports/bandit-report.json || true
 
       - name: Run AI Analyzer
         run: python scanner/ai_analyzer.py
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
          name: ai-security-report
-         path: ai-report.json
+         path: reports/final-report.json
       - name: Commit latest reports
         run: |
           git config --global user.name "github-actions"
