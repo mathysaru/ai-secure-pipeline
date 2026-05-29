@@ -1,0 +1,20 @@
+{
+    "issues": [
+        {
+            "issue_text": "Consider possible security implications associated with the subprocess module.",
+            "severity": "LOW",
+            "ai_analysis": "Safe subprocess usage detected."
+        },
+        {
+            "issue_text": "Starting a process with a partial executable path",
+            "severity": "LOW",
+            "ai_analysis": "Controlled executable usage detected."
+        },
+        {
+            "issue_text": "subprocess call - check for execution of untrusted input.",
+            "severity": "LOW",
+            "ai_analysis": "Safe subprocess usage detected."
+        }
+    ],
+    "final_decision": "PASS"
+}
